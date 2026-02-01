@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine Invite</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#220b16;
+      --card:#0f1630cc;
+      --border:#ffffff1a;
+      --text:#eef1ff;
+      --muted:#c7cbe6;
+      --accent:#ff4d7d;
+      --accent2:#ffb3c7;
+      --btn:#ffffff14;
+      --shadow: 0 20px 60px #00000066;
+      --radius: 24px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 10% 10%, #ff4d7d22, transparent 60%),
+        radial-gradient(700px 500px at 90% 20%, #8b5cf622, transparent 60%),
+        radial-gradient(700px 500px at 30% 90%, #22c55e14, transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* subtle floating hearts */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.25;
+      filter: blur(.1px);
+    }
+    .heart{
+      position:absolute;
+      width:14px;
+      height:14px;
+      background: var(--accent);
+      transform: rotate(45deg);
+      border-radius: 4px;
+      animation: floatUp linear infinite;
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:14px;
+      height:14px;
+      background: var(--accent);
+      border-radius:50%;
+    }
+    .heart::before{ left:-7px; top:0; }
+    .heart::after{ left:0; top:-7px; }
+    @keyframes floatUp{
+      from{ transform: translateY(25vh) rotate(45deg); opacity:0; }
+      10%{ opacity:.9; }
+      to{ transform: translateY(-120vh) rotate(45deg); opacity:0; }
+    }
+
+    .wrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .stack{
+      position:relative;
+      width:min(680px, 92vw);
+      transform-style:preserve-3d;
+    }
+
+    .card{
+      width:100%;
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: clamp(18px, 4vw, 34px);
+    }
+
+    .screen{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transform: translateY(10px) scale(.985);
+      pointer-events:none;
+      transition: opacity 420ms ease, transform 520ms cubic-bezier(.2,.8,.2,1);
+    }
+    .screen.active{
+      position:relative;
+      opacity:1;
+      transform: translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border:1px solid var(--border);
+      border-radius: 999px;
+      background:#ffffff0d;
+      color:var(--muted);
+      font-size: 13px;
+      letter-spacing:.2px;
+      margin-bottom: 16px;
+      user-select:none;
+    }
+
+    .dot{
+      width:9px; height:9px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px #ff4d7d22;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+    }
+
+    p{
+      margin:0;
+      color:var(--muted);
+      font-size: clamp(15px, 2.3vw, 18px);
+      line-height:1.55;
+    }
+
+    .center{
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 14px;
+      min-height: min(520px, 70vh);
+    }
+
+    .btnRow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+
+    button{
+      font: inherit;
+      cursor:pointer;
+      border:1px solid var(--border);
+      background: var(--btn);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 14px;
+      min-width: 130px;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, opacity 280ms ease;
+      box-shadow: 0 10px 30px #00000033;
+      user-select:none;
+    }
+    button:hover{ transform: translateY(-1px); border-color:#ffffff33; background:#ffffff1d; }
+    button:active{ transform: translateY(0); }
+    button.primary{
+      background: linear-gradient(135deg, var(--accent), #ff7aa0);
+      border-color: transparent;
+    }
+    button.primary:hover{ filter: brightness(1.04); }
+
+    .hint{
+      margin-top: 2px;
+      font-size: 13px;
+      color:#cdd1eeaa;
+    }
+
+    .divider{
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #ffffff22, transparent);
+      margin: 8px 0;
+    }
+
+    .terms{
+      width:100%;
+      max-width: 520px;
+      text-align:left;
+      margin-top: 8px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border:1px solid var(--border);
+      background:#ffffff0a;
+      opacity:0;
+      transform: translateY(8px);
+      transition: opacity 400ms ease, transform 520ms cubic-bezier(.2,.8,.2,1);
+    }
+    .terms.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .terms h2{
+      margin:0 0 8px;
+      font-size: 16px;
+      letter-spacing: -.01em;
+    }
+    .terms ul{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height:1.6;
+    }
+
+    .fadeOut{
+      opacity:0;
+      transform: translateY(8px) scale(.98);
+      pointer-events:none;
+    }
+
+    /* confetti canvas */
+    #confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 20;
+      opacity:0;
+      transition: opacity 250ms ease;
+    }
+    #confetti.show{ opacity:1; }
+
+    /* reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .screen, .terms, button, #confetti{ transition:none !important; }
+      .heart{ animation:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+  <main class="wrap">
+    <section class="stack" aria-live="polite">
+
+      <!-- 404 SCREEN -->
+      <div class="screen active" id="screen404">
+        <div class="card center">
+          <div class="badge"><span class="dot"></span> Oops</div>
+          <h1>404 — Page not found</h1>
+          <p>Looks like this page took a wrong turn. Want to try refreshing?</p>
+          <div class="btnRow">
+            <button class="primary" id="refreshBtn">Refresh</button>
+          </div>
+          <div class="hint">(No worries — I won’t actually reload your browser.)</div>
+        </div>
+      </div>
+
+      <!-- VALENTINE SCREEN -->
+      <div class="screen" id="screenValentine">
+        <div class="card center">
+          <div class="badge"><span class="dot"></span> Valentine Invite</div>
+          <h1>Will you be my Valentine?</h1>
+          <p>Answer carefully… your heart might be on the line 💘</p>
+
+          <div class="btnRow" id="ynRow">
+            <button class="primary" id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+          </div>
+
+          <div class="terms" id="terms" role="status" aria-live="polite">
+            <h2>By clicking <strong>Yes</strong> you agree to:</h2>
+            <ul>
+              <li>Unlimited cuddles</li>
+              <li>Lifetime supply of bad puns</li>
+              <li>Annoying her everyday</li>
+            </ul>
+          </div>
+
+          <div class="hint" id="afterHint" style="display:none;">Deal locked in. No take-backs 😌</div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // ---------------------------
+    // Screen transitions
+    // ---------------------------
+    const screen404 = document.getElementById('screen404');
+    const screenVal = document.getElementById('screenValentine');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    function switchScreen(fromEl, toEl){
+      fromEl.classList.remove('active');
+      toEl.classList.add('active');
+      // accessibility: focus first button on next screen
+      const focusTarget = toEl.querySelector('button');
+      if (focusTarget) focusTarget.focus({ preventScroll: true });
+    }
+
+    refreshBtn.addEventListener('click', () => {
+      switchScreen(screen404, screenVal);
+    });
+
+    // ---------------------------
+    // Valentine logic
+    // ---------------------------
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const ynRow  = document.getElementById('ynRow');
+    const terms  = document.getElementById('terms');
+    const afterHint = document.getElementById('afterHint');
+
+    let accepted = false;
+
+    yesBtn.addEventListener('click', () => {
+      if (accepted) return;
+      accepted = true;
+
+      // Reveal terms
+      terms.classList.add('show');
+
+      // Start confetti (5 seconds)
+      startConfetti(5000);
+
+      // Smoothly hide buttons after 1 second
+      setTimeout(() => {
+        ynRow.classList.add('fadeOut');
+        setTimeout(() => { ynRow.style.display = 'none'; }, 320);
+        afterHint.style.display = 'block';
+      }, 1000);
+    });
+
+    // Optional playful "No" behavior: gently dodge the cursor on desktop
+    // (Not required, but keeps it fun and harmless.)
+    function moveNoButton(){
+      if (accepted) return;
+      const maxX = Math.max(0, window.innerWidth - 160);
+      const maxY = Math.max(0, window.innerHeight - 80);
+      const x = Math.floor(Math.random() * maxX);
+      const y = Math.floor(Math.random() * maxY);
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = y + 'px';
+      noBtn.style.zIndex = '10';
+    }
+
+    noBtn.addEventListener('mouseenter', () => {
+      // only on non-touch
+      if (matchMedia('(hover: hover)').matches) moveNoButton();
+    });
+    noBtn.addEventListener('click', () => {
+      if (!accepted) {
+        noBtn.textContent = 'Are you sure?';
+        setTimeout(() => { if(!accepted) noBtn.textContent = 'No'; }, 1200);
+      }
+    });
+
+    // ---------------------------
+    // Confetti (canvas)
+    // ---------------------------
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+
+    function resize(){
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let rafId = null;
+    let particles = [];
+    let confettiStopAt = 0;
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function makeParticle(){
+      const w = rand(6, 12);
+      const h = rand(8, 16);
+      const colors = ['#ff4d7d', '#ffb3c7', '#ffd166', '#06d6a0', '#4cc9f0', '#b517ff'];
+      return {
+        x: rand(0, window.innerWidth),
+        y: rand(-40, -10),
+        vx: rand(-2.2, 2.2),
+        vy: rand(2.2, 5.6),
+        w, h,
+        rot: rand(0, Math.PI * 2),
+        vr: rand(-0.18, 0.18),
+        color: colors[(Math.random() * colors.length) | 0],
+        life: rand(80, 140)
+      };
+    }
+
+    function startConfetti(durationMs){
+      confettiStopAt = performance.now() + durationMs;
+      particles = [];
+      for (let i=0; i<180; i++) particles.push(makeParticle());
+
+      canvas.classList.add('show');
+      if (rafId) cancelAnimationFrame(rafId);
+      tick();
+
+      // Ensure it fully disappears after duration
+      setTimeout(() => {
+        canvas.classList.remove('show');
+        setTimeout(() => {
+          if (!canvas.classList.contains('show')) {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+            particles = [];
+          }
+        }, 260);
+      }, durationMs);
+    }
+
+    function tick(){
+      const now = performance.now();
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+      // spawn while active
+      if (now < confettiStopAt) {
+        if (particles.length < 320) {
+          for (let i=0; i<6; i++) particles.push(makeParticle());
+        }
+      }
+
+      // update
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.03;          // gravity
+        p.vx *= 0.995;
+        p.rot += p.vr;
+        p.life -= 1;
+
+        // wrap horizontally
+        if (p.x < -20) p.x = window.innerWidth + 20;
+        if (p.x > window.innerWidth + 20) p.x = -20;
+
+        // draw
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / 120));
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+
+        // remove when dead/offscreen
+        if (p.life <= 0 || p.y > window.innerHeight + 40) {
+          particles.splice(i, 1);
+        }
+      }
+
+      // continue if particles remain or we're within duration
+      if (particles.length > 0 || now < confettiStopAt) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        rafId = null;
+      }
+    }
+
+    // ---------------------------
+    // Decorative floating hearts
+    // ---------------------------
+    const hearts = document.getElementById('hearts');
+    const HEART_COUNT = 18;
+    for (let i=0; i<HEART_COUNT; i++){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const left = rand(0, 100);
+      const delay = rand(0, 6);
+      const dur = rand(8, 14);
+      const size = rand(10, 18);
+      h.style.left = left + '%';
+      h.style.animationDelay = delay + 's';
+      h.style.animationDuration = dur + 's';
+      h.style.width = size + 'px';
+      h.style.height = size + 'px';
+      hearts.appendChild(h);
+    }
+  </script>
+</body>
+</html>
